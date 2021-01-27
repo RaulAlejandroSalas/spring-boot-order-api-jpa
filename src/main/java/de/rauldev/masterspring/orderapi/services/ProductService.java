@@ -3,6 +3,7 @@ package de.rauldev.masterspring.orderapi.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +18,8 @@ public class ProductService {
 	private IProductRepository productRepository;
 	
 	
-	public List<ProductEntity> findAllProducts(){
-		return this.productRepository.findAll();
+	public List<ProductEntity> findAllProducts(Pageable pageable){
+		return this.productRepository.findAll(pageable).toList();
 	}
 	
 	
