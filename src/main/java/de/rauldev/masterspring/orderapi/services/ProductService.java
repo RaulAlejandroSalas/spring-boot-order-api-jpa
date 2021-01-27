@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.rauldev.masterspring.orderapi.entities.ProductEntity;
+import de.rauldev.masterspring.orderapi.exceptions.NotDataFoundException;
 import de.rauldev.masterspring.orderapi.respository.IProductRepository;
 import de.rauldev.masterspring.orderapi.validators.ProductValidator;
 
@@ -25,7 +26,7 @@ public class ProductService {
 	
 	public ProductEntity findProductById(Long id) {
 		return this.productRepository.findById(id)
-								   	 .orElseThrow(()->new RuntimeException("Not found Product"));
+								   	 .orElseThrow(()->new NotDataFoundException("Not found Product"));
 	
 	}
 	@Transactional
@@ -36,7 +37,7 @@ public class ProductService {
 			return productEntity;
 		}
 		ProductEntity productEntityDB = this.productRepository.findById(product.getId())
-                											  .orElseThrow(()->new RuntimeException("Not found Product"));
+                											  .orElseThrow(()->new NotDataFoundException("Not found Product"));
 		
 		productEntityDB.setName(product.getName());
 		productEntityDB.setPrice(product.getPrice());
@@ -46,7 +47,7 @@ public class ProductService {
 	@Transactional
 	public void deleteProduct(Long id){
 		ProductEntity product = this.productRepository.findById(id)	
-													  .orElseThrow(()->new RuntimeException("Not found Product"));	
+													  .orElseThrow(()->new NotDataFoundException("Not found Product"));	
 		this.productRepository.delete(product);
 	}
 }

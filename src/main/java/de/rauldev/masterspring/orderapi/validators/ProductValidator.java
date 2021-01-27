@@ -1,22 +1,23 @@
 package de.rauldev.masterspring.orderapi.validators;
 
 import de.rauldev.masterspring.orderapi.entities.ProductEntity;
+import de.rauldev.masterspring.orderapi.exceptions.ValidateServiceException;
 
 public class ProductValidator {
 
 	public static void validate(ProductEntity productEntity) {
 		if(productEntity.getName()==null || productEntity.getName().trim().isEmpty())
 		{
-			throw new RuntimeException("The name is required");
+			throw new ValidateServiceException("The name is required");
 		}
 		if(productEntity.getName().length()>100) {
-			throw new RuntimeException("The name must < 100 characters");
+			throw new ValidateServiceException("The name must < 100 characters");
 		}
 		if(productEntity.getPrice()==null) {
-			throw new RuntimeException("The price is required");
+			throw new ValidateServiceException("The price is required");
 		}
 		if(productEntity.getPrice()<0) {
-			throw new RuntimeException("The price must > 0");
+			throw new ValidateServiceException("The price must > 0");
 		}
 	}
 }
