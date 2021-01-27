@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.rauldev.masterspring.orderapi.converters.ProductConverter;
+import de.rauldev.masterspring.orderapi.dtos.ProductDTO;
 import de.rauldev.masterspring.orderapi.entities.ProductEntity;
 import de.rauldev.masterspring.orderapi.respository.IProductRepository;
 import de.rauldev.masterspring.orderapi.services.ProductService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ProductController {
@@ -24,26 +27,38 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 	
+	private ProductConverter converter = new ProductConverter();
+	
 	@GetMapping(value="/products")
-	public ResponseEntity<List<ProductEntity>> findAllProducts(){
-		return new ResponseEntity<List<ProductEntity>>(this.productService.findAllProducts(),HttpStatus.OK);
+	public ResponseEntity<List<ProductDTO>> findAllProducts(){
+		List<ProductEntity> productsDB = this.productService.findAllProducts();
+		
+		List<ProductDTO> productDTOs=converter.fromEntity(productsDB);
+				  
+		return new ResponseEntity<List<ProductDTO>>(productDTOs,HttpStatus.OK);
 	}
 	
 	
 	@GetMapping(value="/products/{id}")
-	public ResponseEntity<ProductEntity> findProductById(@PathVariable("id") Long id) {
-		return new ResponseEntity<ProductEntity>(this.productService.findProductById(id),HttpStatus.OK);
+	public ResponseEntity<ProductDTO> findProductById(@PathVariable("id") Long id) {
+		ProductEntity productEntity = this.productService.findProductById(id);
+		ProductDTO productDTO = converter.fromEntity(productEntity);
+		return new ResponseEntity<ProductDTO>(productDTO,HttpStatus.OK);
 	}
 	
 
 	@PostMapping(value="/products")
-	public ResponseEntity<ProductEntity> createProduct(@RequestBody ProductEntity product){
-		return new ResponseEntity<ProductEntity>(this.productService.saveProduct(product),HttpStatus.CREATED);
+	public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO product){
+		ProductEntity productEntity = this.productService.saveProduct(converter.fromDTO(product));
+		ProductDTO productDTO = converter.fromEntity(productEntity);
+		return new ResponseEntity<ProductDTO>(productDTO,HttpStatus.CREATED);
 	}
 	
 	@PutMapping(value="/products")
-	public ResponseEntity<ProductEntity> updateProduct(@RequestBody ProductEntity product){
-		return new ResponseEntity<ProductEntity>(this.productService.saveProduct(product),HttpStatus.CREATED);
+	public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO product){
+		ProductEntity productEntity = this.productService.saveProduct(converter.fromDTO(product));
+		ProductDTO productDTO = converter.fromEntity(productEntity);
+		return new ResponseEntity<ProductDTO>(productDTO,HttpStatus.CREATED);
 		
 	}
 	
