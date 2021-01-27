@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.rauldev.masterspring.orderapi.entities.ProductEntity;
 import de.rauldev.masterspring.orderapi.respository.IProductRepository;
+import de.rauldev.masterspring.orderapi.validators.ProductValidator;
 
 @Service
 public class ProductService {
@@ -31,6 +32,7 @@ public class ProductService {
 
 	@Transactional
 	public ProductEntity saveProduct(ProductEntity product) {
+		ProductValidator.validate(product);
 		if(product.getId()==null) {
 			ProductEntity productEntity = this.productRepository.save(product);
 			return productEntity;
