@@ -5,6 +5,8 @@ import de.rauldev.masterspring.orderapi.exceptions.ValidateServiceException;
 
 public class ProductValidator {
 
+	private ProductValidator(){}
+
 	public static void validate(ProductEntity productEntity) {
 		if(productEntity.getName()==null || productEntity.getName().trim().isEmpty())
 		{

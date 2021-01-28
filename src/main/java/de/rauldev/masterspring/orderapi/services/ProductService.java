@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ProductService {
 
+	private static final String NOT_PRODUCT_FOUND = "Not found Product";
+
 	@Autowired
 	private IProductRepository productRepository;
 	
@@ -42,9 +44,7 @@ public class ProductService {
 	public ProductEntity findProductById(Long id) {
 		try {
 			log.debug("findProductById => " + id);
-			ProductEntity product= this.productRepository.findById(id)
-				   	                                     .orElseThrow(()->new NotDataFoundException("Not found Product"));
-			return product;
+			return this.productRepository.findById(id).orElseThrow(()->new NotDataFoundException(NOT_PRODUCT_FOUND));
 		} catch (ValidateServiceException | NotDataFoundException e) {
 			log.info(e.getMessage(),e);
 			throw e;
@@ -60,9 +60,7 @@ public class ProductService {
 		if(product.getId()==null) {
 			try {
 				log.debug("saveProduct => " + product.toString());
-				
-				ProductEntity productEntity = this.productRepository.save(product);
-				return productEntity;
+				return  this.productRepository.save(product);
 			} catch (ValidateServiceException | NotDataFoundException e) {
 				log.info(e.getMessage(), e);
 				throw e;
@@ -70,14 +68,13 @@ public class ProductService {
 				log.error(e.getMessage(), e);
 				throw new GeneralServiceException(e.getMessage(), e);
 			}
-				}
-		
+		}
 		try {
 			log.debug("findProductById => " + product.getId());
-			
+
 			ProductEntity productEntityDB = this.productRepository
 												.findById(product.getId())
-												.orElseThrow(()->new NotDataFoundException("Not found Product"));
+												.orElseThrow(()->new NotDataFoundException(NOT_PRODUCT_FOUND));
 			productEntityDB.setName(product.getName());
 			productEntityDB.setPrice(product.getPrice());
 			return this.productRepository.save(productEntityDB);
@@ -97,7 +94,7 @@ public class ProductService {
 			log.debug("deleteProduct => " + id);
 			
 			ProductEntity product = this.productRepository.findById(id)	
-														  .orElseThrow(()->new NotDataFoundException("Not found Product"));	
+														  .orElseThrow(()->new NotDataFoundException(NOT_PRODUCT_FOUND));
 			this.productRepository.delete(product);
 		} catch (ValidateServiceException | NotDataFoundException e) {
 			log.info(e.getMessage(), e);
