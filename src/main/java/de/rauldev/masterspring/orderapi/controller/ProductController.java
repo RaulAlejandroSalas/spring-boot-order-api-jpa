@@ -42,7 +42,7 @@ public class ProductController {
 		
 		List<ProductDTO> productDTOs=converter.fromEntity(productsDB);
 				  
-		return new WrapperResponse<List<ProductDTO>>(true,"SUCCESS",productDTOs)
+		return new WrapperResponse<>(true,"SUCCESS",productDTOs)
 			      .createResponse(HttpStatus.OK);
 	}
 	
