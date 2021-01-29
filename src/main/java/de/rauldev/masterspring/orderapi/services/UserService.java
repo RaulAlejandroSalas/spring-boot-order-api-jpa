@@ -9,15 +9,21 @@ import de.rauldev.masterspring.orderapi.exceptions.NotDataFoundException;
 import de.rauldev.masterspring.orderapi.exceptions.ValidateServiceException;
 import de.rauldev.masterspring.orderapi.repository.IUserRepository;
 import de.rauldev.masterspring.orderapi.validators.UserValidator;
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 
 @Service
 @Slf4j
 public class UserService
 {
+    @Value("${jwt.password}")
+    private String jwtSecret;
     @Autowired
     private IUserRepository userRepository;
     @Autowired
@@ -48,9 +54,10 @@ public class UserService
             UserEntity user = userRepository.findByUsername(loginRequestDTO.getUsername())
                                       .orElseThrow(()->new ValidateServiceException("User or Password incorrect"));
             if(!user.getPassword().equals(loginRequestDTO.getPassword())) throw new ValidateServiceException("User or Password incorrect");
+            String token = createToken(user);
             return LoginResponseDTO.builder()
                                    .user(userConverter.fromEntity(user))
-                                   .token("token")
+                                   .token(token)
                                     .build();
         } catch (ValidateServiceException | NotDataFoundException e) {
             log.info(e.getMessage(), e);
@@ -59,6 +66,38 @@ public class UserService
             log.error(e.getMessage(), e);
             throw new GeneralServiceException(e.getMessage(), e);
         }
+    }
+
+    public String createToken(UserEntity userEntity){
+        Date now = new Date();
+        Date expiryDay = new Date(now.getTime() + (1000*60*60));
+
+        return Jwts.builder()
+                    .setSubject(userEntity.getUsername())
+                    .setIssuedAt(now)
+                    .setExpiration(expiryDay)
+                    .signWith(SignatureAlgorithm.HS256,jwtSecret)
+                    .compact();
+
+    }
+
+    public boolean validateToken(String token){
+        try {
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            return true;
+        }catch (UnsupportedJwtException e){
+            log.error("Jwt is a particular format/config that does not match the format");
+
+        }catch (MalformedJwtException e){
+            log.error("JWT was not correctly constructed and should be rejected");
+        }
+        catch (SignatureException e){
+            log.error("Signature or verifying an existing signature of a JWT failed");
+        }
+        catch (ExpiredJwtException e){
+            log.error("JWT was accepted after it expired and must be rejected");
+        }
+        return false;
     }
 
 }
