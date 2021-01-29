@@ -4,6 +4,7 @@ import de.rauldev.masterspring.orderapi.converters.OrderConverter;
 import de.rauldev.masterspring.orderapi.dtos.OrderDTO;
 import de.rauldev.masterspring.orderapi.dtos.ProductDTO;
 import de.rauldev.masterspring.orderapi.entities.OrderEntity;
+import de.rauldev.masterspring.orderapi.entities.ProductEntity;
 import de.rauldev.masterspring.orderapi.services.OrderService;
 import de.rauldev.masterspring.orderapi.utils.WrapperResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,13 @@ public class OrderController {
     private static final String SUCCESS = "SUCCESS";
     @Autowired
     private OrderService orderService;
+    private final OrderConverter converter = new OrderConverter();
 
     @GetMapping(value = "/orders")
     public ResponseEntity<WrapperResponse<List<OrderDTO>>> findAll(@RequestParam(name = "page",required = false,defaultValue = "0") int page,
                                   @RequestParam(name = "size",required = false,defaultValue = "10") int size){
         Pageable pageable = PageRequest.of(page,size);
         List<OrderEntity> orders = orderService.findAll(pageable);
-        OrderConverter converter = new OrderConverter();
         List<OrderDTO> orderDTOList = converter.fromEntity(orders);
         return new WrapperResponse<>(true,SUCCESS,orderDTOList)
                                     .createResponse(HttpStatus.OK);
@@ -36,18 +37,24 @@ public class OrderController {
     @GetMapping(value = "/orders/{id}")
     public ResponseEntity<WrapperResponse<OrderDTO>> findOrderById(@PathVariable("id") Long id){
         OrderEntity order=orderService.findOrderById(id);
-        OrderConverter converter = new OrderConverter();
         OrderDTO orderDTO = converter.fromEntity(order);
         return new WrapperResponse<>(true,SUCCESS,orderDTO)
                                    .createResponse(HttpStatus.CREATED);
     }
 
 
+    @PostMapping(value="/orders")
+    public ResponseEntity<WrapperResponse<OrderDTO>> createOrder(@RequestBody OrderDTO order){
+        OrderEntity orderEntity = orderService.save(converter.fromDTO(order));
+        OrderDTO orderDTO = converter.fromEntity(orderEntity);
+        return new WrapperResponse<>(true,SUCCESS,orderDTO)
+                                .createResponse(HttpStatus.CREATED);
+    }
+
     @PutMapping(value="/orders")
-    public ResponseEntity<WrapperResponse<OrderDTO>> updateOrder(@RequestBody OrderDTO product){
-        OrderEntity order = new OrderEntity();
-        OrderConverter converter = new OrderConverter();
-        OrderDTO orderDTO = converter.fromEntity(order);
+    public ResponseEntity<WrapperResponse<OrderDTO>> updateOrder(@RequestBody OrderDTO order){
+        OrderEntity orderEntity = orderService.save(converter.fromDTO(order));
+        OrderDTO orderDTO = converter.fromEntity(orderEntity);
         return new WrapperResponse<>(true,SUCCESS,orderDTO)
                                         .createResponse(HttpStatus.CREATED);
 

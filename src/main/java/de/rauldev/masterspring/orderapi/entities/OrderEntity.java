@@ -21,21 +21,24 @@ public class OrderEntity {
     private Long id;
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-    @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<OrderLineEntity> lines;
     @Column(name = "total",nullable = false)
     private Double total;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof OrderEntity)) return false;
         OrderEntity that = (OrderEntity) o;
-        return getId().equals(that.getId());
+        return getId().equals(that.getId()) && getLines().equals(that.getLines());
     }
+
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(getId(), getLines());
     }
+
     @Override
     public String toString() {
         return "OrderEntity{" +

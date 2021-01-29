@@ -38,7 +38,6 @@ public class OrderConverter implements IConverter<OrderEntity, OrderDTO>{
                           .id(dto.getId())
                           .total(dto.getTotal())
                           .lines(lines)
-                          .createdAt(LocalDateTime.parse(dto.getCreatedAt()))
                           .build();
     }
 
