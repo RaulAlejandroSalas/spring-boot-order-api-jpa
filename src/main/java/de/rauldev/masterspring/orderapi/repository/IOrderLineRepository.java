@@ -1,4 +1,4 @@
-package de.rauldev.masterspring.orderapi.respository;
+package de.rauldev.masterspring.orderapi.repository;
 
 import de.rauldev.masterspring.orderapi.entities.OrderLineEntity;
 import org.springframework.data.repository.CrudRepository;

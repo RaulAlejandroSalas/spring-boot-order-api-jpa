@@ -11,7 +11,7 @@ import de.rauldev.masterspring.orderapi.entities.ProductEntity;
 import de.rauldev.masterspring.orderapi.exceptions.GeneralServiceException;
 import de.rauldev.masterspring.orderapi.exceptions.NotDataFoundException;
 import de.rauldev.masterspring.orderapi.exceptions.ValidateServiceException;
-import de.rauldev.masterspring.orderapi.respository.IProductRepository;
+import de.rauldev.masterspring.orderapi.repository.IProductRepository;
 import de.rauldev.masterspring.orderapi.validators.ProductValidator;
 import lombok.extern.slf4j.Slf4j;
 

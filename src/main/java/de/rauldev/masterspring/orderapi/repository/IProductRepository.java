@@ -1,4 +1,4 @@
-package de.rauldev.masterspring.orderapi.respository;
+package de.rauldev.masterspring.orderapi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
