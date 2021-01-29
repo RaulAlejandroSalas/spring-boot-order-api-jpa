@@ -1,6 +1,5 @@
 package de.rauldev.masterspring.orderapi.services;
 
-import de.rauldev.masterspring.orderapi.dtos.OrderDTO;
 import de.rauldev.masterspring.orderapi.entities.OrderEntity;
 import de.rauldev.masterspring.orderapi.entities.OrderLineEntity;
 import de.rauldev.masterspring.orderapi.entities.ProductEntity;
@@ -9,6 +8,8 @@ import de.rauldev.masterspring.orderapi.exceptions.NotDataFoundException;
 import de.rauldev.masterspring.orderapi.exceptions.ValidateServiceException;
 import de.rauldev.masterspring.orderapi.repository.IOrderLineRepository;
 import de.rauldev.masterspring.orderapi.repository.IOrderRepository;
+import de.rauldev.masterspring.orderapi.repository.IProductRepository;
+import de.rauldev.masterspring.orderapi.validators.OrderValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,10 @@ public class OrderService {
 
     @Autowired
     private IOrderLineRepository orderLineRepository;
+
+    @Autowired
+    private IProductRepository productRepository;
+
     @Transactional(readOnly = true)
     public List<OrderEntity> findAll(Pageable pageable){
         try {
@@ -74,6 +79,18 @@ public class OrderService {
     @Transactional
     public OrderEntity save(OrderEntity order){
         try {
+            OrderValidator.validate(order);
+            double total = 0;
+
+            for (OrderLineEntity line:order.getLines()) {
+                ProductEntity productEntity =productRepository.findById(line.getProduct().getId())
+                                 .orElseThrow(()->new NotDataFoundException(NOT_ORDER_FOUND + " " + line.getProduct().getId()));
+                line.setPrice(productEntity.getPrice());
+                line.setTotal(productEntity.getPrice() * line.getQuantity());
+                total+=line.getTotal();
+            }
+
+            order.setTotal(total);
             order.getLines().forEach(l->l.setOrder(order));
             log.debug("saveOrder => " + order.toString());
             if(order.getId()==null){
