@@ -1,3 +1,5 @@
+INSERT INTO users(username,password) VALUES('raul','12345');
+
 INSERT INTO products(product_name,product_price) VALUES ('Product 1', 100);
 INSERT INTO products(product_name,product_price) VALUES ('Product 2', 78);
 INSERT INTO products(product_name,product_price) VALUES ('Product 3', 11);
