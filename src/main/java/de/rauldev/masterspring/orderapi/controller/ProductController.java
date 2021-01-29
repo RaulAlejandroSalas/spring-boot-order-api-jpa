@@ -27,8 +27,9 @@ public class ProductController {
 	
 	@Autowired
 	private ProductService productService;
-	
-	private ProductConverter converter = new ProductConverter();
+
+	@Autowired
+	private ProductConverter converter;
 	
 	//products/?page=1&size=10
 	@GetMapping(value="/products")

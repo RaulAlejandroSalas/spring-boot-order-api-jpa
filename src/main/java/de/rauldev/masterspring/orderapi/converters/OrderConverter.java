@@ -4,16 +4,18 @@ import de.rauldev.masterspring.orderapi.dtos.OrderDTO;
 import de.rauldev.masterspring.orderapi.dtos.OrderLineDTO;
 import de.rauldev.masterspring.orderapi.entities.OrderEntity;
 import de.rauldev.masterspring.orderapi.entities.OrderLineEntity;
+import lombok.AllArgsConstructor;
 
-import java.time.LocalDateTime;
+
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 public class OrderConverter implements IConverter<OrderEntity, OrderDTO>{
 
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
-    private final ProductConverter productConverter = new ProductConverter();
+    private DateTimeFormatter dateTimeFormatter;
+    private ProductConverter productConverter;
 
     @Override
     public OrderDTO fromEntity(OrderEntity entity) {

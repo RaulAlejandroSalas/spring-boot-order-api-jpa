@@ -22,7 +22,8 @@ public class OrderController {
     private static final String SUCCESS = "SUCCESS";
     @Autowired
     private OrderService orderService;
-    private final OrderConverter converter = new OrderConverter();
+    @Autowired
+    private OrderConverter converter;
 
     @GetMapping(value = "/orders")
     public ResponseEntity<WrapperResponse<List<OrderDTO>>> findAll(@RequestParam(name = "page",required = false,defaultValue = "0") int page,
