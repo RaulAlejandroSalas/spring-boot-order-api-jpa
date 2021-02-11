@@ -3,16 +3,19 @@ package de.rauldev.masterspring.orderapi.services;
 import de.rauldev.masterspring.orderapi.entities.OrderEntity;
 import de.rauldev.masterspring.orderapi.entities.OrderLineEntity;
 import de.rauldev.masterspring.orderapi.entities.ProductEntity;
+import de.rauldev.masterspring.orderapi.entities.UserEntity;
 import de.rauldev.masterspring.orderapi.exceptions.GeneralServiceException;
 import de.rauldev.masterspring.orderapi.exceptions.NotDataFoundException;
 import de.rauldev.masterspring.orderapi.exceptions.ValidateServiceException;
 import de.rauldev.masterspring.orderapi.repository.IOrderLineRepository;
 import de.rauldev.masterspring.orderapi.repository.IOrderRepository;
 import de.rauldev.masterspring.orderapi.repository.IProductRepository;
+import de.rauldev.masterspring.orderapi.securiry.PrincipalUser;
 import de.rauldev.masterspring.orderapi.validators.OrderValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,6 +83,10 @@ public class OrderService {
     public OrderEntity save(OrderEntity order){
         try {
             OrderValidator.validate(order);
+            //Getting User Authenticated
+            PrincipalUser principalUser = (PrincipalUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UserEntity userEntity = principalUser.getUserEntity();
+            
             double total = 0;
 
             for (OrderLineEntity line:order.getLines()) {
@@ -95,7 +102,8 @@ public class OrderService {
             log.debug("saveOrder => " + order.toString());
             if(order.getId()==null){
                 //Create new Order
-                 order.setCreatedAt(LocalDateTime.now());
+            	order.setUser(userEntity);
+                order.setCreatedAt(LocalDateTime.now());
                 return orderRepository.save(order);
             }
             //update order

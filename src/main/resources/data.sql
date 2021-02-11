@@ -1,4 +1,4 @@
-INSERT INTO users(username,password) VALUES('raul','12345');
+INSERT INTO users(username,password) VALUES('raul','$2a$10$ysA.ZgwQwaDVjLzy6KbXEe62WrSdAe2n42B5YVPaVeb0m/jjact7K');
 
 INSERT INTO products(product_name,product_price) VALUES ('Product 1', 100);
 INSERT INTO products(product_name,product_price) VALUES ('Product 2', 78);

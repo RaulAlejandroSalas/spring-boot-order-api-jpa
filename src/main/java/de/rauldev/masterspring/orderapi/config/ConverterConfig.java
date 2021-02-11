@@ -22,7 +22,7 @@ public class ConverterConfig {
     @Bean
     public OrderConverter getOrderConverter(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
-        return new OrderConverter(formatter,getProductConverter());
+        return new OrderConverter(formatter,getProductConverter(),getUserConverter());
     }
 
     @Bean

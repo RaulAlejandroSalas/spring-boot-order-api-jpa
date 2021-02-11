@@ -14,4 +14,5 @@ public class OrderDTO {
     private List<OrderLineDTO> lines;
     private String createdAt;
     private Double total;
+    private UserDTO user;
 }

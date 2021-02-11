@@ -8,6 +8,7 @@ public class UserConverter implements IConverter<UserEntity, UserDTO>{
 
     @Override
     public UserDTO fromEntity(UserEntity entity) {
+    	if(entity==null)return null;
         return UserDTO.builder().id(entity.getId())
                                 .username(entity.getUsername())
                                 .build();
@@ -15,6 +16,7 @@ public class UserConverter implements IConverter<UserEntity, UserDTO>{
 
     @Override
     public UserEntity fromDTO(UserDTO dto) {
+    	if(dto==null)return null;
         return UserEntity.builder()
                         .id(dto.getId())
                         .username(dto.getUsername())

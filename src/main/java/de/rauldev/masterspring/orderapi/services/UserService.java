@@ -14,6 +14,7 @@ import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -29,17 +30,21 @@ public class UserService
     private IUserRepository userRepository;
     @Autowired
     private UserConverter userConverter;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserEntity createUser(UserEntity userEntity){
         try {
             UserValidator.validate(userEntity);
             log.debug("createUser => " + userEntity.toString());
             //check if exist a username
-            UserEntity existUser = userRepository.findByUsername(userEntity.getUsername())
+            UserEntity existUser = userRepository.findByusername(userEntity.getUsername())
                                                  .orElse(null);
             if(existUser!=null){
                 throw new ValidateServiceException(ApplicationConst.USER_EXIST);
             }
+            String encoder=passwordEncoder.encode(userEntity.getPassword());
+            userEntity.setPassword(encoder);
             return userRepository.save(userEntity);
         } catch (ValidateServiceException | NotDataFoundException e) {
             log.info(e.getMessage(), e);
@@ -53,9 +58,9 @@ public class UserService
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO){
         try {
             log.debug("login => ");
-            UserEntity user = userRepository.findByUsername(loginRequestDTO.getUsername())
+            UserEntity user = userRepository.findByusername(loginRequestDTO.getUsername())
                                       .orElseThrow(()->new ValidateServiceException(ApplicationConst.ERROR_USER_PASSWORD));
-            if(!user.getPassword().equals(loginRequestDTO.getPassword())) throw new ValidateServiceException(ApplicationConst.ERROR_USER_PASSWORD);
+            if(!passwordEncoder.matches(loginRequestDTO.getPassword(),user.getPassword())) throw new ValidateServiceException(ApplicationConst.ERROR_USER_PASSWORD);
             String token = createToken(user);
             return LoginResponseDTO.builder()
                                    .user(userConverter.fromEntity(user))
@@ -100,6 +105,15 @@ public class UserService
             log.error("JWT was accepted after it expired and must be rejected");
         }
         return false;
+    }
+    
+    public String getUserNameFromToken(String jwt) {
+    	try {
+			return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(jwt).getBody().getSubject();
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+			throw new ValidateServiceException("Invalid Token");
+		}
     }
 
 }

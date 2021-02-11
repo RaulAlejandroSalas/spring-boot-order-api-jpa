@@ -25,6 +25,10 @@ public class OrderEntity {
     private List<OrderLineEntity> lines;
     @Column(name = "total",nullable = false)
     private Double total;
+    
+    @ManyToOne
+    @JoinColumn(name = "fk_user", updatable = false)
+    private UserEntity user;
 
     @Override
     public boolean equals(Object o) {

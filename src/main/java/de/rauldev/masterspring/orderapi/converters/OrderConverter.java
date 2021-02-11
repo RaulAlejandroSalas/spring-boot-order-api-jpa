@@ -16,6 +16,7 @@ public class OrderConverter implements IConverter<OrderEntity, OrderDTO>{
 
     private DateTimeFormatter dateTimeFormatter;
     private ProductConverter productConverter;
+    private UserConverter userConverter;
 
     @Override
     public OrderDTO fromEntity(OrderEntity entity) {
@@ -26,6 +27,7 @@ public class OrderConverter implements IConverter<OrderEntity, OrderDTO>{
                        .id(entity.getId())
                        .lines(lines)
                        .total(entity.getTotal())
+                       .user(userConverter.fromEntity(entity.getUser()))
                        .createdAt(entity.getCreatedAt().format(dateTimeFormatter))
                        .build();
 
@@ -40,6 +42,7 @@ public class OrderConverter implements IConverter<OrderEntity, OrderDTO>{
                           .id(dto.getId())
                           .total(dto.getTotal())
                           .lines(lines)
+                          .user(userConverter.fromDTO(dto.getUser()))
                           .build();
     }
 
