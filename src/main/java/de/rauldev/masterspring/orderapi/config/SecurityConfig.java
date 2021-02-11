@@ -25,12 +25,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
              .httpBasic()
              .disable()
              .exceptionHandling()
-             .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+             .authenticationEntryPoint(new RestAuthenticationEntryPoint()) //Authentication Errors Management
              .and()
              .authorizeRequests()
-             .antMatchers(
-                     "/login",
-                        "/signup")
+             .antMatchers("/login", "/signup")
              .permitAll()
              .anyRequest()
              .authenticated();

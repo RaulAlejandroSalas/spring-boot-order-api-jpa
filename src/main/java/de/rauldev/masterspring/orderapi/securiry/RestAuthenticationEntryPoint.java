@@ -7,6 +7,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+/**
+ * @Description "This Class is used for Customizing the Error Authentication Responses"
+ * */
 
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 

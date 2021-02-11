@@ -1,5 +1,6 @@
 package de.rauldev.masterspring.orderapi.controller;
 
+import de.rauldev.masterspring.orderapi.consts.ApplicationConst;
 import de.rauldev.masterspring.orderapi.converters.UserConverter;
 import de.rauldev.masterspring.orderapi.dtos.LoginRequestDTO;
 import de.rauldev.masterspring.orderapi.dtos.LoginResponseDTO;
@@ -27,13 +28,13 @@ public class UserController {
     @PostMapping(value = "/signup")
     public ResponseEntity<WrapperResponse<UserDTO>> signUp(@RequestBody SignUpRequestDTO signUpRequest){
         UserEntity userEntity = userService.createUser(userConverter.signUp(signUpRequest));
-        return new WrapperResponse<>(true,"SUCCESS",userConverter.fromEntity(userEntity))
+        return new WrapperResponse<>(true, ApplicationConst.SUCCESS,userConverter.fromEntity(userEntity))
                                     .createResponse(HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/login")
     public ResponseEntity<WrapperResponse<LoginResponseDTO>> login(@RequestBody LoginRequestDTO loginRequestDTO){
         LoginResponseDTO loginResponseDTO= userService.login(loginRequestDTO);
-        return new WrapperResponse<>(true,"SUCCESS",loginResponseDTO).createResponse(HttpStatus.OK);
+        return new WrapperResponse<>(true,ApplicationConst.SUCCESS,loginResponseDTO).createResponse(HttpStatus.OK);
     }
 }

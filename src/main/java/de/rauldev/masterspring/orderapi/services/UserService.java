@@ -1,5 +1,6 @@
 package de.rauldev.masterspring.orderapi.services;
 
+import de.rauldev.masterspring.orderapi.consts.ApplicationConst;
 import de.rauldev.masterspring.orderapi.converters.UserConverter;
 import de.rauldev.masterspring.orderapi.dtos.LoginRequestDTO;
 import de.rauldev.masterspring.orderapi.dtos.LoginResponseDTO;
@@ -34,9 +35,10 @@ public class UserService
             UserValidator.validate(userEntity);
             log.debug("createUser => " + userEntity.toString());
             //check if exist a username
-            UserEntity existUser = userRepository.findByUsername(userEntity.getUsername()).orElse(null);
+            UserEntity existUser = userRepository.findByUsername(userEntity.getUsername())
+                                                 .orElse(null);
             if(existUser!=null){
-                throw new ValidateServiceException("The username exists");
+                throw new ValidateServiceException(ApplicationConst.USER_EXIST);
             }
             return userRepository.save(userEntity);
         } catch (ValidateServiceException | NotDataFoundException e) {
@@ -52,13 +54,13 @@ public class UserService
         try {
             log.debug("login => ");
             UserEntity user = userRepository.findByUsername(loginRequestDTO.getUsername())
-                                      .orElseThrow(()->new ValidateServiceException("User or Password incorrect"));
-            if(!user.getPassword().equals(loginRequestDTO.getPassword())) throw new ValidateServiceException("User or Password incorrect");
+                                      .orElseThrow(()->new ValidateServiceException(ApplicationConst.ERROR_USER_PASSWORD));
+            if(!user.getPassword().equals(loginRequestDTO.getPassword())) throw new ValidateServiceException(ApplicationConst.ERROR_USER_PASSWORD);
             String token = createToken(user);
             return LoginResponseDTO.builder()
                                    .user(userConverter.fromEntity(user))
                                    .token(token)
-                                    .build();
+                                   .build();
         } catch (ValidateServiceException | NotDataFoundException e) {
             log.info(e.getMessage(), e);
             throw e;
@@ -70,7 +72,7 @@ public class UserService
 
     public String createToken(UserEntity userEntity){
         Date now = new Date();
-        Date expiryDay = new Date(now.getTime() + (1000*60*60));
+        Date expiryDay = new Date(now.getTime() + (1000*60*60)); //1000*60*60 (1 Hour)
 
         return Jwts.builder()
                     .setSubject(userEntity.getUsername())
