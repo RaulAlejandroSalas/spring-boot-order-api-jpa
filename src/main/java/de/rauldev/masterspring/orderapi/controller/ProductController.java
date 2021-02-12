@@ -27,8 +27,9 @@ public class ProductController {
 	
 	@Autowired
 	private ProductService productService;
-	
-	private ProductConverter converter = new ProductConverter();
+
+	@Autowired
+	private ProductConverter converter;
 	
 	//products/?page=1&size=10
 	@GetMapping(value="/products")
@@ -42,7 +43,7 @@ public class ProductController {
 		
 		List<ProductDTO> productDTOs=converter.fromEntity(productsDB);
 				  
-		return new WrapperResponse<List<ProductDTO>>(true,"SUCCESS",productDTOs)
+		return new WrapperResponse<>(true,"SUCCESS",productDTOs)
 			      .createResponse(HttpStatus.OK);
 	}
 	
@@ -51,7 +52,7 @@ public class ProductController {
 	public ResponseEntity<WrapperResponse<ProductDTO>> findProductById(@PathVariable("id") Long id) {
 		ProductEntity productEntity = this.productService.findProductById(id);
 		ProductDTO productDTO = converter.fromEntity(productEntity);
-		return new WrapperResponse<ProductDTO>(true,"SUCCESS",productDTO)
+		return new WrapperResponse<>(true,"SUCCESS",productDTO)
 										      .createResponse(HttpStatus.OK);
 	}
 	
@@ -60,7 +61,7 @@ public class ProductController {
 	public ResponseEntity<WrapperResponse<ProductDTO>> createProduct(@RequestBody ProductDTO product){
 		ProductEntity productEntity = this.productService.saveProduct(converter.fromDTO(product));
 		ProductDTO productDTO = converter.fromEntity(productEntity);
-		return new WrapperResponse<ProductDTO>(true,"SUCCESS",productDTO)
+		return new WrapperResponse<>(true,"SUCCESS",productDTO)
 			      .createResponse(HttpStatus.CREATED);
 	}
 	
@@ -68,7 +69,7 @@ public class ProductController {
 	public ResponseEntity<WrapperResponse<ProductDTO>> updateProduct(@RequestBody ProductDTO product){
 		ProductEntity productEntity = this.productService.saveProduct(converter.fromDTO(product));
 		ProductDTO productDTO = converter.fromEntity(productEntity);
-		return new WrapperResponse<ProductDTO>(true,"SUCCESS",productDTO)
+		return new WrapperResponse<>(true,"SUCCESS",productDTO)
 			      .createResponse(HttpStatus.CREATED);
 		
 	}

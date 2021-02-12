@@ -18,30 +18,30 @@ import lombok.extern.slf4j.Slf4j;
 public class ErrorHandlerConfig extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<?> all(Exception e,WebRequest request){
+	public ResponseEntity<WrapperResponse<String>> all(Exception e,WebRequest request){
 		log.error(e.getMessage(),e);
-		WrapperResponse<?> response = new WrapperResponse<>(false,"Internal Server Error",null);
+		WrapperResponse<String> response = new WrapperResponse<>(false,"Internal Server Error",null);
 		return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@ExceptionHandler(ValidateServiceException.class)
-	public ResponseEntity<?> validateServiceException(ValidateServiceException e,WebRequest request){
+	public ResponseEntity<WrapperResponse<String>> validateServiceException(ValidateServiceException e,WebRequest request){
 		log.info(e.getMessage(),e);
-		WrapperResponse<?> response = new WrapperResponse<>(false,e.getMessage(),null);
+		WrapperResponse<String> response = new WrapperResponse<>(false,e.getMessage(),null);
 		return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(NotDataFoundException.class)
-	public ResponseEntity<?> noDataFoundException(NotDataFoundException e,WebRequest request){
+	public ResponseEntity<WrapperResponse<String>> noDataFoundException(NotDataFoundException e,WebRequest request){
 		log.info(e.getMessage(),e);
-		WrapperResponse<?> response = new WrapperResponse<>(false,e.getMessage(),null);
+		WrapperResponse<String> response = new WrapperResponse<>(false,e.getMessage(),null);
 		return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(GeneralServiceException.class)
-	public ResponseEntity<?> generalServiceException(GeneralServiceException e,WebRequest request){
+	public ResponseEntity<WrapperResponse<String>> generalServiceException(GeneralServiceException e,WebRequest request){
 		log.error(e.getMessage(),e);
-		WrapperResponse<?> response = new WrapperResponse<>(false,"Internal Sever Error",null);
+		WrapperResponse<String> response = new WrapperResponse<>(false,"Internal Sever Error",null);
 		return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

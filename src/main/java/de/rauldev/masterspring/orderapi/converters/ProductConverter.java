@@ -3,7 +3,7 @@ package de.rauldev.masterspring.orderapi.converters;
 import de.rauldev.masterspring.orderapi.dtos.ProductDTO;
 import de.rauldev.masterspring.orderapi.entities.ProductEntity;
 
-public class ProductConverter extends AbstractConverter<ProductEntity,ProductDTO> {
+public class ProductConverter implements IConverter<ProductEntity,ProductDTO> {
 
 	@Override
 	public ProductDTO fromEntity(ProductEntity entity) {
