@@ -24,61 +24,61 @@ import java.util.List;
 
 @RestController
 public class ProductController {
-	
-	@Autowired
-	private ProductService productService;
 
-	@Autowired
-	private ProductConverter converter;
-	
-	//products/?page=1&size=10
-	@GetMapping(value="/products")
-	public ResponseEntity<WrapperResponse<List<ProductDTO>>> findAllProducts(
-			@RequestParam(value="page",required = false,defaultValue = "0") int page,
-			@RequestParam(value="size",required = false,defaultValue = "10") int size
-			){
-		
-		Pageable pageable = PageRequest.of(page, size);
-		List<ProductEntity> productsDB = this.productService.findAllProducts(pageable);
-		
-		List<ProductDTO> productDTOs=converter.fromEntity(productsDB);
-				  
-		return new WrapperResponse<>(true,"SUCCESS",productDTOs)
-			      .createResponse(HttpStatus.OK);
-	}
-	
-	
-	@GetMapping(value="/products/{id}")
-	public ResponseEntity<WrapperResponse<ProductDTO>> findProductById(@PathVariable("id") Long id) {
-		ProductEntity productEntity = this.productService.findProductById(id);
-		ProductDTO productDTO = converter.fromEntity(productEntity);
-		return new WrapperResponse<>(true,"SUCCESS",productDTO)
-										      .createResponse(HttpStatus.OK);
-	}
-	
+    @Autowired
+    private ProductService productService;
 
-	@PostMapping(value="/products")
-	public ResponseEntity<WrapperResponse<ProductDTO>> createProduct(@RequestBody ProductDTO product){
-		ProductEntity productEntity = this.productService.saveProduct(converter.fromDTO(product));
-		ProductDTO productDTO = converter.fromEntity(productEntity);
-		return new WrapperResponse<>(true,"SUCCESS",productDTO)
-			      .createResponse(HttpStatus.CREATED);
-	}
-	
-	@PutMapping(value="/products")
-	public ResponseEntity<WrapperResponse<ProductDTO>> updateProduct(@RequestBody ProductDTO product){
-		ProductEntity productEntity = this.productService.saveProduct(converter.fromDTO(product));
-		ProductDTO productDTO = converter.fromEntity(productEntity);
-		return new WrapperResponse<>(true,"SUCCESS",productDTO)
-			      .createResponse(HttpStatus.CREATED);
-		
-	}
-	
-	@DeleteMapping(value="/products/{id}")
-	public ResponseEntity<?> deleteProduct(@PathVariable("id") Long id){
-		this.productService.deleteProduct(id);
-		return new WrapperResponse<ProductDTO>(true,"SUCCESS",null)
-			      .createResponse(HttpStatus.OK);
-	}
-	
+    @Autowired
+    private ProductConverter converter;
+
+    //products/?page=1&size=10
+    @GetMapping(value = "/products")
+    public ResponseEntity<WrapperResponse<List<ProductDTO>>> findAllProducts(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        List<ProductEntity> productsDB = this.productService.findAllProducts(pageable);
+
+        List<ProductDTO> productDTOs = converter.fromEntity(productsDB);
+
+        return new WrapperResponse<>(true, "SUCCESS", productDTOs)
+                .createResponse(HttpStatus.OK);
+    }
+
+
+    @GetMapping(value = "/products/{id}")
+    public ResponseEntity<WrapperResponse<ProductDTO>> findProductById(@PathVariable("id") Long id) {
+        ProductEntity productEntity = this.productService.findProductById(id);
+        ProductDTO productDTO = converter.fromEntity(productEntity);
+        return new WrapperResponse<>(true, "SUCCESS", productDTO)
+                .createResponse(HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "/products")
+    public ResponseEntity<WrapperResponse<ProductDTO>> createProduct(@RequestBody ProductDTO product) {
+        ProductEntity productEntity = this.productService.saveProduct(converter.fromDTO(product));
+        ProductDTO productDTO = converter.fromEntity(productEntity);
+        return new WrapperResponse<>(true, "SUCCESS", productDTO)
+                .createResponse(HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/products")
+    public ResponseEntity<WrapperResponse<ProductDTO>> updateProduct(@RequestBody ProductDTO product) {
+        ProductEntity productEntity = this.productService.saveProduct(converter.fromDTO(product));
+        ProductDTO productDTO = converter.fromEntity(productEntity);
+        return new WrapperResponse<>(true, "SUCCESS", productDTO)
+                .createResponse(HttpStatus.CREATED);
+
+    }
+
+    @DeleteMapping(value = "/products/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") Long id) {
+        this.productService.deleteProduct(id);
+        return new WrapperResponse<ProductDTO>(true, "SUCCESS", null)
+                .createResponse(HttpStatus.OK);
+    }
+
 }

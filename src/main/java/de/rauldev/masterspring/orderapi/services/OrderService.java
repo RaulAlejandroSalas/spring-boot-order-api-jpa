@@ -37,7 +37,7 @@ public class OrderService {
     private IProductRepository productRepository;
 
     @Transactional(readOnly = true)
-    public List<OrderEntity> findAll(Pageable pageable){
+    public List<OrderEntity> findAll(Pageable pageable) {
         try {
             log.debug("finAllOrders => ");
             return orderRepository.findAll(pageable).toList();
@@ -49,27 +49,12 @@ public class OrderService {
             throw new GeneralServiceException(e.getMessage(), e);
         }
     }
+
     @Transactional(readOnly = true)
-    public OrderEntity findOrderById(Long id){
+    public OrderEntity findOrderById(Long id) {
         try {
             log.debug("findOrderById => " + id);
-            return orderRepository.findById(id).orElseThrow(()->new NotDataFoundException(NOT_ORDER_FOUND));
-        } catch (ValidateServiceException | NotDataFoundException e) {
-            log.info(e.getMessage(),e);
-            throw e;
-        }catch (Exception e) {
-            log.error(e.getMessage(),e);
-            throw new GeneralServiceException(e.getMessage(),e);
-        }
-    }
-
-    @Transactional
-    public void deleteOrder(Long id){
-        try {
-            log.debug("deleteOrder => " + id);
-            OrderEntity orderEntity = orderRepository.findById(id)
-                                                     .orElseThrow(()->new NotDataFoundException(NOT_ORDER_FOUND));
-           orderRepository.delete(orderEntity);
+            return orderRepository.findById(id).orElseThrow(() -> new NotDataFoundException(NOT_ORDER_FOUND));
         } catch (ValidateServiceException | NotDataFoundException e) {
             log.info(e.getMessage(), e);
             throw e;
@@ -80,35 +65,51 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderEntity save(OrderEntity order){
+    public void deleteOrder(Long id) {
+        try {
+            log.debug("deleteOrder => " + id);
+            OrderEntity orderEntity = orderRepository.findById(id)
+                    .orElseThrow(() -> new NotDataFoundException(NOT_ORDER_FOUND));
+            orderRepository.delete(orderEntity);
+        } catch (ValidateServiceException | NotDataFoundException e) {
+            log.info(e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new GeneralServiceException(e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public OrderEntity save(OrderEntity order) {
         try {
             OrderValidator.validate(order);
             //Getting User Authenticated
-            PrincipalUser principalUser = (PrincipalUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            PrincipalUser principalUser = (PrincipalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             UserEntity userEntity = principalUser.getUserEntity();
-            
+
             double total = 0;
 
-            for (OrderLineEntity line:order.getLines()) {
-                ProductEntity productEntity =productRepository.findById(line.getProduct().getId())
-                                 .orElseThrow(()->new NotDataFoundException(NOT_ORDER_FOUND + " " + line.getProduct().getId()));
+            for (OrderLineEntity line : order.getLines()) {
+                ProductEntity productEntity = productRepository.findById(line.getProduct().getId())
+                        .orElseThrow(() -> new NotDataFoundException(NOT_ORDER_FOUND + " " + line.getProduct().getId()));
                 line.setPrice(productEntity.getPrice());
                 line.setTotal(productEntity.getPrice() * line.getQuantity());
-                total+=line.getTotal();
+                total += line.getTotal();
             }
 
             order.setTotal(total);
-            order.getLines().forEach(l->l.setOrder(order));
+            order.getLines().forEach(l -> l.setOrder(order));
             log.debug("saveOrder => " + order.toString());
-            if(order.getId()==null){
+            if (order.getId() == null) {
                 //Create new Order
-            	order.setUser(userEntity);
+                order.setUser(userEntity);
                 order.setCreatedAt(LocalDateTime.now());
                 return orderRepository.save(order);
             }
             //update order
             OrderEntity orderSaved = orderRepository.findById(order.getId())
-                                                    .orElseThrow(()-> new NotDataFoundException(NOT_ORDER_FOUND));
+                    .orElseThrow(() -> new NotDataFoundException(NOT_ORDER_FOUND));
             //remove lines
             List<OrderLineEntity> orderLineEntities = orderSaved.getLines();
             orderLineEntities.removeAll(order.getLines());

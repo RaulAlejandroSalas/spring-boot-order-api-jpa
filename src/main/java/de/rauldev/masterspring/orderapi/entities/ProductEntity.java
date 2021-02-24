@@ -19,18 +19,18 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="products")
+@Table(name = "products")
 public class ProductEntity {
-	
-	@Id
-	@Column(name="id_product")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@Column(name="product_name", nullable = false, length = 100)
-	private String name;
-	
-	@Column(name="product_price", nullable = false)
-	private Double price;
+    @Id
+    @Column(name = "id_product")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "product_name", nullable = false, length = 100)
+    private String name;
+
+    @Column(name = "product_price", nullable = false)
+    private Double price;
 }
 

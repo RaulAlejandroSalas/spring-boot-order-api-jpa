@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import de.rauldev.masterspring.orderapi.entities.ProductEntity;
 
 @Repository
-public interface IProductRepository extends JpaRepository<ProductEntity, Long>{
+public interface IProductRepository extends JpaRepository<ProductEntity, Long> {
 
 }

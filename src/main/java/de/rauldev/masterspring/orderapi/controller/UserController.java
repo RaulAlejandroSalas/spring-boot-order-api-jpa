@@ -26,15 +26,15 @@ public class UserController {
     private UserConverter userConverter;
 
     @PostMapping(value = "/signup")
-    public ResponseEntity<WrapperResponse<UserDTO>> signUp(@RequestBody SignUpRequestDTO signUpRequest){
+    public ResponseEntity<WrapperResponse<UserDTO>> signUp(@RequestBody SignUpRequestDTO signUpRequest) {
         UserEntity userEntity = userService.createUser(userConverter.signUp(signUpRequest));
-        return new WrapperResponse<>(true, ApplicationConst.SUCCESS,userConverter.fromEntity(userEntity))
-                                    .createResponse(HttpStatus.CREATED);
+        return new WrapperResponse<>(true, ApplicationConst.SUCCESS, userConverter.fromEntity(userEntity))
+                .createResponse(HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<WrapperResponse<LoginResponseDTO>> login(@RequestBody LoginRequestDTO loginRequestDTO){
-        LoginResponseDTO loginResponseDTO= userService.login(loginRequestDTO);
-        return new WrapperResponse<>(true,ApplicationConst.SUCCESS,loginResponseDTO).createResponse(HttpStatus.OK);
+    public ResponseEntity<WrapperResponse<LoginResponseDTO>> login(@RequestBody LoginRequestDTO loginRequestDTO) {
+        LoginResponseDTO loginResponseDTO = userService.login(loginRequestDTO);
+        return new WrapperResponse<>(true, ApplicationConst.SUCCESS, loginResponseDTO).createResponse(HttpStatus.OK);
     }
 }

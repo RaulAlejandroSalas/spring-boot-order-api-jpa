@@ -18,56 +18,56 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Bean
-	public PasswordEncoder createPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-	
-	@Bean
-	public TokenAuthenticationFilter createTokenAuthenticationFilter() {
-		return new TokenAuthenticationFilter();
-	}
-	
+    @Bean
+    public PasswordEncoder createPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public TokenAuthenticationFilter createTokenAuthenticationFilter() {
+        return new TokenAuthenticationFilter();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors()
-             .and()
-             .sessionManagement()
-             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-             .and()
-             .csrf()
-             .disable()
-             .formLogin()
-             .disable()
-             .httpBasic()
-             .disable()
-             .exceptionHandling()
-             .authenticationEntryPoint(new RestAuthenticationEntryPoint()) //Authentication Errors Management
-             .and()
-             .authorizeRequests()
-			 .antMatchers("/",
-						"/error",
-						"/favicon.ico",
-						"/**/*.png",
-						"/**/*.gif",
-						"/**/*.svg",
-						"/**/*.jpg",
-						"/**/*.html",
-						"/**/*.css",
-						"/**/*.js",
-						"/**/*.woff2"
-			 )
-			 .permitAll()
-             .antMatchers(
-             		"/login",
-					 "/signup",
-					 "/v2/api-docs",
-					 "/webjars/**",
-					 "/swagger-resources/**")
-             .permitAll()
-             .anyRequest()
-             .authenticated();
-        
-        http.addFilterBefore(createTokenAuthenticationFilter(),UsernamePasswordAuthenticationFilter.class);
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .csrf()
+                .disable()
+                .formLogin()
+                .disable()
+                .httpBasic()
+                .disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(new RestAuthenticationEntryPoint()) //Authentication Errors Management
+                .and()
+                .authorizeRequests()
+                .antMatchers("/",
+                        "/error",
+                        "/favicon.ico",
+                        "/**/*.png",
+                        "/**/*.gif",
+                        "/**/*.svg",
+                        "/**/*.jpg",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js",
+                        "/**/*.woff2"
+                )
+                .permitAll()
+                .antMatchers(
+                        "/login",
+                        "/signup",
+                        "/v2/api-docs",
+                        "/webjars/**",
+                        "/swagger-resources/**")
+                .permitAll()
+                .anyRequest()
+                .authenticated();
+
+        http.addFilterBefore(createTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

@@ -19,7 +19,7 @@ public class OrderLineEntity {
     @JoinColumn(name = "fk_order", nullable = false)
     private OrderEntity order;
     @ManyToOne
-    @JoinColumn(name = "fk_product",nullable = false)
+    @JoinColumn(name = "fk_product", nullable = false)
     private ProductEntity product;
     @Column(name = "price")
     private Double price;

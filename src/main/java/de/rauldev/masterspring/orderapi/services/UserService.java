@@ -22,8 +22,7 @@ import java.util.Date;
 
 @Service
 @Slf4j
-public class UserService
-{
+public class UserService {
     @Value("${jwt.password}")
     private String jwtSecret;
     @Autowired
@@ -33,17 +32,17 @@ public class UserService
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UserEntity createUser(UserEntity userEntity){
+    public UserEntity createUser(UserEntity userEntity) {
         try {
             UserValidator.validate(userEntity);
             log.debug("createUser => " + userEntity.toString());
             //check if exist a username
             UserEntity existUser = userRepository.findByusername(userEntity.getUsername())
-                                                 .orElse(null);
-            if(existUser!=null){
+                    .orElse(null);
+            if (existUser != null) {
                 throw new ValidateServiceException(ApplicationConst.USER_EXIST);
             }
-            String encoder=passwordEncoder.encode(userEntity.getPassword());
+            String encoder = passwordEncoder.encode(userEntity.getPassword());
             userEntity.setPassword(encoder);
             return userRepository.save(userEntity);
         } catch (ValidateServiceException | NotDataFoundException e) {
@@ -55,17 +54,18 @@ public class UserService
         }
     }
 
-    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO){
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         try {
             log.debug("login => ");
             UserEntity user = userRepository.findByusername(loginRequestDTO.getUsername())
-                                      .orElseThrow(()->new ValidateServiceException(ApplicationConst.ERROR_USER_PASSWORD));
-            if(!passwordEncoder.matches(loginRequestDTO.getPassword(),user.getPassword())) throw new ValidateServiceException(ApplicationConst.ERROR_USER_PASSWORD);
+                    .orElseThrow(() -> new ValidateServiceException(ApplicationConst.ERROR_USER_PASSWORD));
+            if (!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword()))
+                throw new ValidateServiceException(ApplicationConst.ERROR_USER_PASSWORD);
             String token = createToken(user);
             return LoginResponseDTO.builder()
-                                   .user(userConverter.fromEntity(user))
-                                   .token(token)
-                                   .build();
+                    .user(userConverter.fromEntity(user))
+                    .token(token)
+                    .build();
         } catch (ValidateServiceException | NotDataFoundException e) {
             log.info(e.getMessage(), e);
             throw e;
@@ -75,45 +75,43 @@ public class UserService
         }
     }
 
-    public String createToken(UserEntity userEntity){
+    public String createToken(UserEntity userEntity) {
         Date now = new Date();
-        Date expiryDay = new Date(now.getTime() + (1000*60*60)); //1000*60*60 (1 Hour)
+        Date expiryDay = new Date(now.getTime() + (1000 * 60 * 60)); //1000*60*60 (1 Hour)
 
         return Jwts.builder()
-                    .setSubject(userEntity.getUsername())
-                    .setIssuedAt(now)
-                    .setExpiration(expiryDay)
-                    .signWith(SignatureAlgorithm.HS256,jwtSecret)
-                    .compact();
+                .setSubject(userEntity.getUsername())
+                .setIssuedAt(now)
+                .setExpiration(expiryDay)
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .compact();
 
     }
 
-    public boolean validateToken(String token){
+    public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
-        }catch (UnsupportedJwtException e){
+        } catch (UnsupportedJwtException e) {
             log.error("Jwt is a particular format/config that does not match the format");
 
-        }catch (MalformedJwtException e){
+        } catch (MalformedJwtException e) {
             log.error("JWT was not correctly constructed and should be rejected");
-        }
-        catch (SignatureException e){
+        } catch (SignatureException e) {
             log.error("Signature or verifying an existing signature of a JWT failed");
-        }
-        catch (ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             log.error("JWT was accepted after it expired and must be rejected");
         }
         return false;
     }
-    
+
     public String getUserNameFromToken(String jwt) {
-    	try {
-			return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(jwt).getBody().getSubject();
-		} catch (Exception e) {
-			log.error(e.getMessage(),e);
-			throw new ValidateServiceException("Invalid Token");
-		}
+        try {
+            return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(jwt).getBody().getSubject();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new ValidateServiceException("Invalid Token");
+        }
     }
 
 }

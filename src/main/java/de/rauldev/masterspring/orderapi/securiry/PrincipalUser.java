@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 /*
-* User Authenticated Wrapper Class for Spring Boot boosting detection
-* */
+ * User Authenticated Wrapper Class for Spring Boot boosting detection
+ * */
 
 @AllArgsConstructor
 @Getter
@@ -21,11 +21,11 @@ public class PrincipalUser implements UserDetails {
     private UserEntity userEntity;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public static PrincipalUser create(UserEntity userEntity){
+    public static PrincipalUser create(UserEntity userEntity) {
         List<GrantedAuthority> grantedAuthorityList = Collections.singletonList(
                 new SimpleGrantedAuthority("ROLE_USER")
         );
-        return new PrincipalUser(userEntity,grantedAuthorityList);
+        return new PrincipalUser(userEntity, grantedAuthorityList);
     }
 
     @Override

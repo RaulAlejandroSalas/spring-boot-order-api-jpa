@@ -15,18 +15,18 @@ public class ConverterConfig {
     private String dateTimeFormat;
 
     @Bean
-    public ProductConverter getProductConverter(){
+    public ProductConverter getProductConverter() {
         return new ProductConverter();
     }
 
     @Bean
-    public OrderConverter getOrderConverter(){
+    public OrderConverter getOrderConverter() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
-        return new OrderConverter(formatter,getProductConverter(),getUserConverter());
+        return new OrderConverter(formatter, getProductConverter(), getUserConverter());
     }
 
     @Bean
-    public UserConverter getUserConverter(){
+    public UserConverter getUserConverter() {
         return new UserConverter();
     }
 }

@@ -20,30 +20,30 @@ import java.util.Collections;
 public class SwaggerConfig {
 
     @Bean
-    public Docket apiDocket(){
+    public Docket apiDocket() {
         return new Docket(DocumentationType.SWAGGER_2)
-                   .globalOperationParameters(Collections.singletonList(
-                           new ParameterBuilder()
-                                   .name("Authorization")
-                                   .description("Authentication Token").modelRef(new ModelRef("string"))
-                                   .parameterType("header")
-                                   .required(false)
-                                   .build()
-                   ))
-                   .select()
-                   .apis(RequestHandlerSelectors.basePackage("de.rauldev.masterspring.orderapi.controller"))
-                   .paths(PathSelectors.any())
-                   .build()
-                   .apiInfo(getApiInfo());
+                .globalOperationParameters(Collections.singletonList(
+                        new ParameterBuilder()
+                                .name("Authorization")
+                                .description("Authentication Token").modelRef(new ModelRef("string"))
+                                .parameterType("header")
+                                .required(false)
+                                .build()
+                ))
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("de.rauldev.masterspring.orderapi.controller"))
+                .paths(PathSelectors.any())
+                .build()
+                .apiInfo(getApiInfo());
     }
 
-    private ApiInfo getApiInfo(){
+    private ApiInfo getApiInfo() {
         return new ApiInfo(
                 "Order Service Api",
                 "Order Service Api Description",
                 "1.0",
                 "https://rauldev.de/terms",
-                new Contact("Freelance","https://rauldev.de/term","apis@rauldev.de"),
+                new Contact("Freelance", "https://rauldev.de/term", "apis@rauldev.de"),
                 "LICENSE",
                 "LICENSE URL",
                 Collections.emptyList()
