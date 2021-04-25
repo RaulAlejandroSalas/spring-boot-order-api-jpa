@@ -7,6 +7,7 @@ import de.rauldev.masterspring.orderapi.entities.OrderEntity;
 import de.rauldev.masterspring.orderapi.entities.ProductEntity;
 import de.rauldev.masterspring.orderapi.services.OrderService;
 import de.rauldev.masterspring.orderapi.utils.WrapperResponse;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ public class OrderController {
     @Autowired
     private OrderConverter converter;
 
+    @Timed("get-orders")
     @GetMapping(value = "/orders")
     public ResponseEntity<WrapperResponse<List<OrderDTO>>> findAll(@RequestParam(name = "page", required = false, defaultValue = "0") int page,
                                                                    @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
@@ -35,6 +37,7 @@ public class OrderController {
                 .createResponse(HttpStatus.OK);
     }
 
+    @Timed("get-orders-byId")
     @GetMapping(value = "/orders/{id}")
     public ResponseEntity<WrapperResponse<OrderDTO>> findOrderById(@PathVariable("id") Long id) {
         OrderEntity order = orderService.findOrderById(id);
@@ -44,6 +47,7 @@ public class OrderController {
     }
 
 
+    @Timed("post-orders")
     @PostMapping(value = "/orders")
     public ResponseEntity<WrapperResponse<OrderDTO>> createOrder(@RequestBody OrderDTO order) {
         OrderEntity orderEntity = orderService.save(converter.fromDTO(order));
@@ -52,6 +56,7 @@ public class OrderController {
                 .createResponse(HttpStatus.CREATED);
     }
 
+    @Timed("put-order")
     @PutMapping(value = "/orders")
     public ResponseEntity<WrapperResponse<OrderDTO>> updateOrder(@RequestBody OrderDTO order) {
         OrderEntity orderEntity = orderService.save(converter.fromDTO(order));
@@ -61,6 +66,7 @@ public class OrderController {
 
     }
 
+    @Timed("delete-order-byId")
     @DeleteMapping(value = "/orders/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable("id") Long id) {
         orderService.deleteOrder(id);

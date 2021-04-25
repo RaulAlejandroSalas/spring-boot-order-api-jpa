@@ -1,5 +1,6 @@
 package de.rauldev.masterspring.orderapi.controller;
 
+import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ public class ProductController {
     private ProductConverter converter;
 
     //products/?page=1&size=10
+    @Timed("get-products")
     @GetMapping(value = "/products")
     public ResponseEntity<WrapperResponse<List<ProductDTO>>> findAllProducts(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
@@ -47,7 +49,7 @@ public class ProductController {
                 .createResponse(HttpStatus.OK);
     }
 
-
+    @Timed("get-products-byId")
     @GetMapping(value = "/products/{id}")
     public ResponseEntity<WrapperResponse<ProductDTO>> findProductById(@PathVariable("id") Long id) {
         ProductEntity productEntity = this.productService.findProductById(id);
